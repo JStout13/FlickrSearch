@@ -19,13 +19,21 @@ struct ImageListView: View {
             ScrollView(.vertical, showsIndicators: false) {
                 LazyVStack {
                     ForEach(images, id: \.self) { image in
-                        imageRowView(for: image)
-                            .onTapGesture {
-                                self.selectedImage = image
-                                withAnimation(.easeInOut) {
-                                    self.showDetailView = true
-                                }
+                        Button {
+                            self.selectedImage = image
+                            withAnimation(.easeInOut) {
+                                self.showDetailView = true
                             }
+                        } label: {
+                            imageRowView(for: image)
+                        }
+                        
+//                            .onTapGesture {
+//                                self.selectedImage = image
+//                                withAnimation(.easeInOut) {
+//                                    self.showDetailView = true
+//                                }
+//                            }
                     }
                 }
             }

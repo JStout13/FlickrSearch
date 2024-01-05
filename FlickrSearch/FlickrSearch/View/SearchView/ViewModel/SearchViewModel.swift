@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import UIKit
 
 class SearchViewModel: ObservableObject {
     @Published var images: [Item] = []
@@ -41,6 +42,7 @@ class SearchViewModel: ObservableObject {
             }, receiveValue: { [weak self] fetchedImages in
                 self?.images = fetchedImages.items
                 self?.isLoading = false
+                UIApplication.shared.endEditing()
             })
             .store(in: &cancellables)
     }

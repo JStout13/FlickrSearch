@@ -9,6 +9,8 @@ import SwiftUI
 import SDWebImageSwiftUI
 
 struct ImageDetailView: View {
+    @StateObject var viewModel = ImageDetailViewModel()
+    
     var image: Item
     @Binding var showDetailView: Bool
     
@@ -17,7 +19,7 @@ struct ImageDetailView: View {
             
             topHeader()
             
-            List {
+            Form {
                 Section {
                     WebImage(url: URL(string: image.media.m))
                         .resizable()
@@ -27,6 +29,10 @@ struct ImageDetailView: View {
                 Section(header: Text("Image Information")) {
                     infoRowView(title: "Title:", info: image.title)
                     infoRowView(title: "Description:", info: image.description)
+                    infoRowView(title: "Image Size:", info: "Width: \(viewModel.imageWidth) Height: \(viewModel.imageHeight)")
+                        .onAppear {
+                            viewModel.getImageSize(from: image.media.m)
+                        }
                     infoRowView(title: "Author:", info: image.author)
                     infoRowView(title: "Date Taken:", info: formatDate(image.dateTaken))
                     infoRowView(title: "Published:", info: formatDate(image.published))
