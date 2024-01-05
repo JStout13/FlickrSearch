@@ -49,12 +49,10 @@ struct SearchView: View {
                     .onChange(of: searchText) { _, newValue in
                         viewModel.updateSearch(text: newValue)
                     }
-                }
-                
-                if showDetailView {
-                    if let image = selectedImage {
-                        ImageDetailView(image: image, showDetailView: $showDetailView)
-                            .transition(.asymmetric(insertion: .scale, removal: .opacity))
+                    .fullScreenCover(isPresented: $showDetailView) {
+                        if let image = selectedImage {
+                            ImageDetailView(image: image, showDetailView: $showDetailView)
+                        }
                     }
                 }
                 

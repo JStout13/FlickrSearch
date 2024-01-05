@@ -31,13 +31,6 @@ struct ImageGridView: View {
                             } label: {
                                 gridRowView(for: image)
                             }
-                            
-//                                .onTapGesture {
-//                                    self.selectedImage = image
-//                                    withAnimation(.easeInOut) {
-//                                        self.showDetailView = true
-//                                    }
-//                                }
                         }
                     }
                 }

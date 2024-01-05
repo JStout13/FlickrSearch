@@ -24,6 +24,7 @@ struct ImageDetailView: View {
                     WebImage(url: URL(string: image.media.m))
                         .resizable()
                         .scaledToFit()
+                        .frame(maxHeight: 400)
                 }
                 
                 Section(header: Text("Image Information")) {

@@ -27,13 +27,6 @@ struct ImageListView: View {
                         } label: {
                             imageRowView(for: image)
                         }
-                        
-//                            .onTapGesture {
-//                                self.selectedImage = image
-//                                withAnimation(.easeInOut) {
-//                                    self.showDetailView = true
-//                                }
-//                            }
                     }
                 }
             }
