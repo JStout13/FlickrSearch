@@ -12,6 +12,7 @@ struct FlickrSearchApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(SearchViewModel())
                 .environment(\.colorScheme, .light)
             // added this to run the app in "light" mode, the test params did not state to use light/dark mode. My personal phone is always on dark mode
         }

@@ -12,6 +12,7 @@ import UIKit
 class SearchViewModel: ObservableObject {
     @Published var images: [Item] = []
     @Published var isLoading = false
+    
     private var cancellables = Set<AnyCancellable>()
     private var searchSubject = PassthroughSubject<String, Never>()
     private var searchCancellable: AnyCancellable?
@@ -32,19 +33,42 @@ class SearchViewModel: ObservableObject {
     }
     
     private func performSearch(tag: String) {
-        isLoading = true
+        DispatchQueue.main.async {
+            self.isLoading = true
+        }
         networkService.fetchImages(tag: tag)
             .sink(receiveCompletion: { [weak self] completion in
-                if case .failure(let error) = completion {
-                    self?.isLoading = false
-                    print("Fetch Images Error: \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    if case .failure(let error) = completion {
+                        self?.isLoading = false
+                        print("Fetch Images Error: \(error.localizedDescription)")
+                    }
                 }
             }, receiveValue: { [weak self] fetchedImages in
-                self?.images = fetchedImages.items
-                self?.isLoading = false
-                UIApplication.shared.endEditing()
+                DispatchQueue.main.async {
+                    self?.images = fetchedImages.items
+                    self?.isLoading = false
+                }
             })
             .store(in: &cancellables)
+    }
+
+    func getImageSize(from url: String, completion: @escaping (CGFloat, CGFloat) -> Void) {
+        guard let imgUrl = URL(string: url) else {
+            completion(0,0)
+            return
+        }
+        DispatchQueue.global(qos: .userInitiated).async {
+            if let data = try? Data(contentsOf: imgUrl), let image = UIImage(data: data) {
+                DispatchQueue.main.async {
+                    print("Image Width: \(image.size.width) Height: \(image.size.height)")
+                    completion(image.size.width, image.size.height)
+                }
+            } else {
+                print("NO DATA")
+                completion(0,0)
+            }
+        }
     }
     
     deinit {

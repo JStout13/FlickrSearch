@@ -9,7 +9,10 @@ import SwiftUI
 import SDWebImageSwiftUI
 
 struct ImageDetailView: View {
-    @StateObject var viewModel = ImageDetailViewModel()
+    @EnvironmentObject var viewModel: SearchViewModel
+    @State private var isFetchingImageSize: Bool = true
+    @State private var imageWidth: CGFloat = 0
+    @State private var imageHeight: CGFloat = 0
     
     var image: Item
     @Binding var showDetailView: Bool
@@ -19,7 +22,7 @@ struct ImageDetailView: View {
             
             topHeader()
             
-            Form {
+            VStack {
                 Section {
                     WebImage(url: URL(string: image.media.m))
                         .resizable()
@@ -30,19 +33,23 @@ struct ImageDetailView: View {
                 Section(header: Text("Image Information")) {
                     infoRowView(title: "Title:", info: image.title)
                     infoRowView(title: "Description:", info: image.description)
-                    infoRowView(title: "Image Size:", info: "Width: \(viewModel.imageWidth) Height: \(viewModel.imageHeight)")
-                        .onAppear {
-                            viewModel.getImageSize(from: image.media.m)
-                        }
+                    if isFetchingImageSize {
+                        infoRowView(title: "", info: "Fetching Image Size...")
+                    } else {
+                        infoRowView(title: "Image Size:", info: "Width: \(imageWidth) Height: \(imageHeight)")
+                    }
                     infoRowView(title: "Author:", info: image.author)
                     infoRowView(title: "Date Taken:", info: formatDate(image.dateTaken))
                     infoRowView(title: "Published:", info: formatDate(image.published))
                     infoRowView(title: "Tags:", info: image.tags)
                 }
             }
-            .listStyle(GroupedListStyle())
+            .padding(.horizontal, 16)
         }
         .background(Color(.systemBackground))
+        .onAppear {
+            fetchImageSize()
+        }
     }
 
     @ViewBuilder
@@ -72,6 +79,16 @@ struct ImageDetailView: View {
         }
         .padding(.horizontal, 16)
         .padding(.top, 8)
+    }
+    
+    private func fetchImageSize() {
+        viewModel.getImageSize(from: image.media.m) { width, height in
+            DispatchQueue.main.async {
+                self.imageWidth = width
+                self.imageHeight = height
+                self.isFetchingImageSize = false
+            }
+        }
     }
     
     private func formattedShareContent() -> String {
