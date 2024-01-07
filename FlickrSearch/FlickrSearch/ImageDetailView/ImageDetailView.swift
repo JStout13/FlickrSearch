@@ -50,6 +50,9 @@ struct ImageDetailView: View {
         .onAppear {
             fetchImageSize()
         }
+        .alert(isPresented: $viewModel.showError) {
+            Alert(title: Text("Error"), message: Text(viewModel.errorMsg), dismissButton: .default(Text("OK")))
+        }
     }
 
     @ViewBuilder

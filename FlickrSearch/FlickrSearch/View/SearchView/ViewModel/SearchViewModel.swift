@@ -12,7 +12,8 @@ import UIKit
 class SearchViewModel: ObservableObject {
     @Published var images: [Item] = []
     @Published var isLoading = false
-    
+    @Published var showError = false
+    @Published var errorMsg = ""
     private var cancellables = Set<AnyCancellable>()
     private var searchSubject = PassthroughSubject<String, Never>()
     private var searchCancellable: AnyCancellable?
@@ -41,7 +42,8 @@ class SearchViewModel: ObservableObject {
                 DispatchQueue.main.async {
                     if case .failure(let error) = completion {
                         self?.isLoading = false
-                        print("Fetch Images Error: \(error.localizedDescription)")
+                        self?.errorMsg = "Error fetching images: \(error.localizedDescription)"
+                        self?.showError = true
                     }
                 }
             }, receiveValue: { [weak self] fetchedImages in
@@ -65,7 +67,8 @@ class SearchViewModel: ObservableObject {
                     completion(image.size.width, image.size.height)
                 }
             } else {
-                print("NO DATA")
+                self.errorMsg = "Something went wrong, un able to fetch image size."
+                self.showError = true
                 completion(0,0)
             }
         }

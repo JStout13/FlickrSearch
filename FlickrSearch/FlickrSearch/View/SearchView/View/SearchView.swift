@@ -47,6 +47,9 @@ struct SearchView: View {
                         ImageDetailView(image: image, showDetailView: $showDetailView)
                     }
                 }
+                .alert(isPresented: $viewModel.showError) {
+                    Alert(title: Text("Error"), message: Text(viewModel.errorMsg), dismissButton: .default(Text("OK")))
+                }
             }
             
             if viewModel.isLoading {
